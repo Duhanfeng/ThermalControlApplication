@@ -97,6 +97,17 @@ namespace ThermalControlApplication
             }
         }
 
+        public new ushort TempModel { get; set; }
+
+        /// <summary>
+        /// 设置多段数据
+        /// </summary>
+        /// <param name="tempSteps"></param>
+        public new void SetMultiStep(IList<TempStepData> tempSteps)
+        {
+
+        }
+
         #endregion
 
         #region 系统控制

@@ -31,8 +31,23 @@ namespace ThermalControlApplication
         /// <param name="e"></param>
         private void Form1_Load(object sender, EventArgs e)
         {
+
             UpdateSerialPort();
             UpdateConnectStatus(false);
+            UpdateTempModeStatus(false);
+
+            UpdateDateTimer.Enabled = true;
+        }
+
+        /// <summary>
+        /// 更新时间
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UpdateDateTimer_Tick(object sender, EventArgs e)
+        {
+            TimeLabel.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
         }
 
         #region 串口
@@ -250,7 +265,50 @@ namespace ThermalControlApplication
 
         }
 
+        /// <summary>
+        /// 更新温度模式状态
+        /// </summary>
+        private void UpdateTempModeStatus(bool isMultiStep)
+        {
+            MultiStepSettingButton.Enabled = isMultiStep;
+            OneStepPanel.Enabled = !isMultiStep;
+        }
+
+        /// <summary>
+        /// 设置为单段模式
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OneStepRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            McuControl.TempModel = 0;
+            UpdateTempModeStatus(false);
+        }
+
+        /// <summary>
+        /// 设置为多段模式
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MultiStepRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            McuControl.TempModel = 1;
+            UpdateTempModeStatus(true);
+        }
+
+        /// <summary>
+        /// 打开多段设置界面
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MultiStepSettingButton_Click(object sender, EventArgs e)
+        {
+            MultiStepSettingForm form = new MultiStepSettingForm(McuControl);
+            form.Show();
+        }
+
         #endregion
+
 
     }
 }
