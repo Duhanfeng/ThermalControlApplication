@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DhfLib.Communication;
 
-namespace ThermalControlApplication
+namespace ThermalContainerApplication
 {
     public class TempStepData
     {
@@ -15,24 +15,112 @@ namespace ThermalControlApplication
         public double Temp { get; set; }
 
         /// <summary>
-        /// 保温时间
+        /// 保温时间(单位:分钟)
         /// </summary>
-        public int KeepTime { get; set; }
+        public double KeepWarmTime { get; set; }
 
         public TempStepData()
         {
 
         }
 
-        public TempStepData(double temp, int keepTime)
+        public TempStepData(double temp, double keepWarmTime)
         {
             Temp = temp;
-            KeepTime = keepTime;
+            KeepWarmTime = keepWarmTime;
         }
 
     }
 
-    public class McuControl
+    public interface IMcuControl
+    {
+        #region Modbus
+
+        /// <summary>
+        /// 串口
+        /// </summary>
+        string SerialPortName { get; set; }
+
+        /// <summary>
+        /// 从机地址
+        /// </summary>
+        byte SlaveAddress { get; set; }
+
+        #endregion
+
+        #region 设备控制
+
+        #region IO
+
+        /// <summary>
+        /// 读取所有输出IO的状态
+        /// </summary>
+        /// <returns></returns>
+        bool[] ReadAllOutputIOStatus();
+
+        /// <summary>
+        /// 读取所有输入IO的状态
+        /// </summary>
+        /// <returns></returns>
+        bool[] ReadAllInputIOStatus();
+
+        /// <summary>
+        /// 设置输出IO状态
+        /// </summary>
+        /// <param name="index">IO索引</param>
+        /// <param name="isEnable">IO状态</param>
+        void SetOutputIOStatus(byte index, bool isEnable);
+
+        #endregion
+
+        #region 温度控制
+
+        /// <summary>
+        /// 温度模式(0-单段 1-多段)
+        /// </summary>
+        ushort TempMode { get; set; }
+
+        /// <summary>
+        /// 预设温度
+        /// </summary>
+        double PresetTemp { get; set; }
+
+        /// <summary>
+        /// 当前温度
+        /// </summary>
+        double ActualTemp { get; }
+
+        /// <summary>
+        /// 设置多段数据
+        /// </summary>
+        /// <param name="tempSteps"></param>
+        void SetMultiStep(IList<TempStepData> tempSteps);
+
+        #endregion
+
+        #region 系统控制
+
+        /// <summary>
+        /// 当前工作状态
+        /// </summary>
+        ushort WorkStatus { get; }
+
+        /// <summary>
+        /// 启动
+        /// </summary>
+        void Start();
+
+        /// <summary>
+        /// 停止
+        /// </summary>
+        void Stop();
+
+        #endregion
+
+        #endregion
+    }
+
+    public class McuControl : IMcuControl
     {
         #region Modbus
 
@@ -89,24 +177,14 @@ namespace ThermalControlApplication
         private readonly ushort TempModeAddress = 0x02;
 
         /// <summary>
-        /// 预设温度1地址(读写)
+        /// 预设温度地址(读写)
         /// </summary>
-        private readonly ushort PresetTemp1Address = 0x04;
+        private readonly ushort PresetTempAddress = 0x04;
 
         /// <summary>
-        /// 当前温度1地址(只读)
+        /// 当前温度地址(只读)
         /// </summary>
-        private readonly ushort CurrentTemp1Address = 0x06;
-
-        /// <summary>
-        /// 预设温度2地址(读写)
-        /// </summary>
-        private readonly ushort PresetTemp2Address = 0x08;
-
-        /// <summary>
-        /// 当前温度2地址(只读)
-        /// </summary>
-        private readonly ushort CurrentTemp2Address = 0x0A;
+        private readonly ushort CurrentTempAddress = 0x06;
 
         /// <summary>
         /// 多段温度段数
@@ -206,7 +284,7 @@ namespace ThermalControlApplication
         /// 读取所有输入IO的状态
         /// </summary>
         /// <returns></returns>
-        public bool[] ReadAllIputIOStatus()
+        public bool[] ReadAllInputIOStatus()
         {
             return modbusRtu.ReadCoils(SlaveAddress, InputCoilAddress, 5);
         }
@@ -241,54 +319,28 @@ namespace ThermalControlApplication
         }
 
         /// <summary>
-        /// 预设温度1
+        /// 预设温度
         /// </summary>
-        public double PresetTemp1 
+        public double PresetTemp
         { 
             get
             {
-                return ReadDouble(SlaveAddress, PresetTemp1Address, 1000);
+                return ReadDouble(SlaveAddress, PresetTempAddress, 1000);
             }
             set
             {
-                WriteDouble(SlaveAddress, PresetTemp1Address, 1000, value);
+                WriteDouble(SlaveAddress, PresetTempAddress, 1000, value);
             }
         }
 
         /// <summary>
-        /// 当前温度1
+        /// 当前温度
         /// </summary>
-        public double CurrentTemp1 
+        public double ActualTemp
         { 
             get
             {
-                return ReadDouble(SlaveAddress, CurrentTemp1Address, 1000);
-            }
-        }
-
-        /// <summary>
-        /// 预设温度2
-        /// </summary>
-        public double PresetTemp2
-        {
-            get
-            {
-                return ReadDouble(SlaveAddress, PresetTemp2Address, 1000);
-            }
-            set
-            {
-                WriteDouble(SlaveAddress, PresetTemp2Address, 1000, value);
-            }
-        }
-
-        /// <summary>
-        /// 当前温度2
-        /// </summary>
-        public double CurrentTemp2
-        {
-            get
-            {
-                return ReadDouble(SlaveAddress, CurrentTemp2Address, 1000);
+                return ReadDouble(SlaveAddress, CurrentTempAddress, 1000);
             }
         }
 
@@ -305,9 +357,9 @@ namespace ThermalControlApplication
             {
                 //写入温度值
                 WriteDouble(SlaveAddress, (ushort)(MultiStepTempStartAddress + i * 2), 1000, tempSteps[i].Temp);
-                
+
                 //写入保温时间
-                WriteInt(SlaveAddress, (ushort)(MultiStepTimeStartAddress + i * 2), tempSteps[i].KeepTime);
+                WriteDouble(SlaveAddress, (ushort)(MultiStepTimeStartAddress + i * 2), 1000, tempSteps[i].KeepWarmTime);
             }
 
         }

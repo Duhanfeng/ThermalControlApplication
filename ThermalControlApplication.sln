@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThermalControlApplication", "ThermalControlApplication\ThermalControlApplication.csproj", "{24A26E00-9DC3-47EF-93F0-A7BDF6A421EC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChartsDemo", "ChartsDemo\ChartsDemo.csproj", "{D1F06D61-25C2-47AD-B8A3-6EA67D8E10A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThermalContainerApplication", "ThermalContainerApplication\ThermalContainerApplication.csproj", "{969C1172-59C9-48D8-A9EE-4656730366FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{24A26E00-9DC3-47EF-93F0-A7BDF6A421EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24A26E00-9DC3-47EF-93F0-A7BDF6A421EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24A26E00-9DC3-47EF-93F0-A7BDF6A421EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1F06D61-25C2-47AD-B8A3-6EA67D8E10A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1F06D61-25C2-47AD-B8A3-6EA67D8E10A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1F06D61-25C2-47AD-B8A3-6EA67D8E10A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1F06D61-25C2-47AD-B8A3-6EA67D8E10A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{969C1172-59C9-48D8-A9EE-4656730366FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{969C1172-59C9-48D8-A9EE-4656730366FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{969C1172-59C9-48D8-A9EE-4656730366FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{969C1172-59C9-48D8-A9EE-4656730366FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

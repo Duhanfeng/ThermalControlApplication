@@ -4,10 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ThermalControlApplication
+namespace ThermalContainerApplication
 {
-    public class McuSimulation : McuControl
+    public class McuSimulation : IMcuControl
     {
+        #region Modbus
+
+        /// <summary>
+        /// 串口
+        /// </summary>
+        public string SerialPortName { get; set; }
+
+        /// <summary>
+        /// 从机地址
+        /// </summary>
+        public byte SlaveAddress { get; set; }
+
+        #endregion
 
         #region 设备控制
 
@@ -21,7 +34,7 @@ namespace ThermalControlApplication
         /// 读取所有输出IO的状态
         /// </summary>
         /// <returns></returns>
-        public new bool[] ReadAllOutputIOStatus()
+        public bool[] ReadAllOutputIOStatus()
         {
             return _outputs;
         }
@@ -30,7 +43,7 @@ namespace ThermalControlApplication
         /// 读取所有输入IO的状态
         /// </summary>
         /// <returns></returns>
-        public new bool[] ReadAllIputIOStatus()
+        public bool[] ReadAllInputIOStatus()
         {
             return _inputs;
         }
@@ -40,31 +53,46 @@ namespace ThermalControlApplication
         /// </summary>
         /// <param name="index">IO索引</param>
         /// <param name="isEnable">IO状态</param>
-        public new void SetOutputIOStatus(byte index, bool isEnable)
+        public void SetOutputIOStatus(byte index, bool isEnable)
         {
             _outputs[index] = isEnable;
 
+            Console.WriteLine($"O[{index}]={isEnable}");
         }
 
         #endregion
 
         #region 温度控制
 
-        public new double PresetTemp1 { get; set; } = 60;
+        private double _presetTemp = 60;
+
+
+        public double PresetTemp
+        {
+            get
+            {
+                return _presetTemp;
+            }
+            set
+            {
+                _presetTemp = value;
+                Console.WriteLine($"预设温度:{value}");
+            }
+        }
 
         private Random random = new Random();
 
         private double _currenTemp1 = 30;
 
-        public new double CurrentTemp1 
+        public double ActualTemp
         { 
             get
             {
                 _currenTemp1 += random.NextDouble() - 0.5;
 
-                if (_currenTemp1 > PresetTemp1)
+                if (_currenTemp1 > PresetTemp)
                 {
-                    _currenTemp1 = PresetTemp1;
+                    _currenTemp1 = PresetTemp;
                 }
                 else if (_currenTemp1 < 0)
                 {
@@ -74,36 +102,26 @@ namespace ThermalControlApplication
             }
         }
 
-        public new double PresetTemp2 { get; set; } = 60;
+        public ushort _tempMode = 0;
 
-
-        private double _currenTemp2 = 30;
-
-        public new double CurrentTemp2
-        {
+        public ushort TempMode 
+        { 
             get
             {
-                _currenTemp2 += random.NextDouble() - 0.5;
-
-                if (_currenTemp2 > PresetTemp2)
-                {
-                    _currenTemp2 = PresetTemp2;
-                }
-                else if (_currenTemp2 < 0)
-                {
-                    _currenTemp2 = 0;
-                }
-                return _currenTemp2;
+                return _tempMode;
+            }
+            set
+            {
+                _tempMode = value;
+                Console.WriteLine($"温度模式:{value}");
             }
         }
-
-        public new ushort TempMode { get; set; }
 
         /// <summary>
         /// 设置多段数据
         /// </summary>
         /// <param name="tempSteps"></param>
-        public new void SetMultiStep(IList<TempStepData> tempSteps)
+        public void SetMultiStep(IList<TempStepData> tempSteps)
         {
 
         }
@@ -115,7 +133,7 @@ namespace ThermalControlApplication
         /// <summary>
         /// 当前工作状态
         /// </summary>
-        public new ushort WorkStatus
+        public ushort WorkStatus
         {
             get
             {
@@ -126,18 +144,19 @@ namespace ThermalControlApplication
         /// <summary>
         /// 启动
         /// </summary>
-        public new void Start()
+        public void Start()
         {
+            Console.WriteLine("Start");
 
         }
 
         /// <summary>
         /// 停止
         /// </summary>
-        public new void Stop()
+        public void Stop()
         {
+            Console.WriteLine("Stop");
 
-            
         }
 
         #endregion

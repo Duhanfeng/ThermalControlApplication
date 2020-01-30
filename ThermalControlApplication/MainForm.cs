@@ -281,7 +281,7 @@ namespace ThermalControlApplication
         /// <param name="e"></param>
         private void OneStepRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            McuControl.TempModel = 0;
+            McuControl.TempMode = 0;
             UpdateTempModeStatus(false);
         }
 
@@ -292,7 +292,7 @@ namespace ThermalControlApplication
         /// <param name="e"></param>
         private void MultiStepRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            McuControl.TempModel = 1;
+            McuControl.TempMode = 1;
             UpdateTempModeStatus(true);
         }
 

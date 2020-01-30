@@ -1,0 +1,134 @@
+﻿<UserControl x:Class="ThermalContainerApplication.DeviceControl"
+                      xmlns:Chart="clr-namespace:ThermalContainerApplication.Chart" 
+                      xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls" 
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:local="clr-namespace:ThermalContainerApplication"
+                      xmlns:cal="http://www.caliburnproject.org"
+                      xmlns:converters="clr-namespace:ThermalContainerApplication.Converters"
+                      mc:Ignorable="d"
+                      d:DataContext="{d:DesignInstance local:DeviceControlViewModel}"
+             d:DesignHeight="550" d:DesignWidth="300">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:BoolToInvertConverter x:Key="BoolToInvertConverter" />
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <StackPanel IsEnabled="{Binding IsConnected}" Margin="10">
+            <DockPanel Margin="0,10,0,0">
+                <TextBlock DockPanel.Dock="Left" Margin="0,0,10,0" VerticalAlignment="Center" MinWidth="80">工作状态</TextBlock>
+                <StackPanel DockPanel.Dock="Right" Margin="10,0,10,0" MinWidth="60"/>
+                <TextBox Text="{Binding WorkStatus}" IsReadOnly="True"/>
+            </DockPanel>
+            <DockPanel Margin="0,10,0,0">
+                <TextBlock DockPanel.Dock="Left" Margin="0,0,10,0" VerticalAlignment="Center" MinWidth="80">实际温度(度)</TextBlock>
+                <StackPanel DockPanel.Dock="Right" Margin="10,0,10,0" MinWidth="60"/>
+                <TextBox Text="{Binding ActualTemp, StringFormat={}{0:F3}}" IsReadOnly="True"/>
+            </DockPanel>
+            <DockPanel Margin="0,10,0,0">
+                <TextBlock DockPanel.Dock="Left" Margin="0,0,10,0" VerticalAlignment="Center" MinWidth="80">温度模式</TextBlock>
+                <Button cal:Message.Attach="ConfigMultiStepMode" IsEnabled="{Binding IsMultiStepMode}" DockPanel.Dock="Right" Margin="10,0,10,0" MinWidth="60">设置</Button>
+                <RadioButton cal:Message.Attach="SetOneStepModel" Content="单段" VerticalAlignment="Center" Margin="0,0,10,0" IsChecked="True"/>
+                <RadioButton cal:Message.Attach="SetMultiStepModel" Content="多段" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            </DockPanel>
+            <DockPanel Margin="0,10,0,0" IsEnabled="{Binding IsMultiStepMode, Converter={StaticResource BoolToInvertConverter}}">
+                <TextBlock DockPanel.Dock="Left" Margin="0,0,10,0" VerticalAlignment="Center" MinWidth="80">单段温度(度)</TextBlock>
+                <Button cal:Message.Attach="SetPresetTemp" DockPanel.Dock="Right" Margin="10,0,10,0" MinWidth="60">设置</Button>
+                <TextBox Text="{Binding PresetTemp, StringFormat={}{0:F3}, UpdateSourceTrigger=Explicit}" KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus"/>
+            </DockPanel>
+            <StackPanel Margin="0,20,0,0">
+                <TextBlock Margin="0,0,10,0" VerticalAlignment="Center" MinWidth="80">IO控制</TextBlock>
+                <StackPanel Margin="0,10,0,0">
+                    <TextBlock Margin="20,0,10,0" VerticalAlignment="Center" MinWidth="80">输出IO</TextBlock>
+                    <StackPanel Margin="40,0,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,10,0" MinWidth="120">
+                                <StackPanel MinWidth="25">
+                                    <CheckBox cal:Message.Attach="SetOutput0" IsChecked="{Binding Output0State}" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                                <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" MinWidth="80">输出信号0</TextBlock>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,10,0" MinWidth="120">
+                                <StackPanel MinWidth="25">
+                                    <CheckBox cal:Message.Attach="SetOutput1" IsChecked="{Binding Output1State}" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                                <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" MinWidth="80">输出信号1</TextBlock>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,10,0" MinWidth="120">
+                                <StackPanel MinWidth="25">
+                                    <CheckBox cal:Message.Attach="SetOutput2" IsChecked="{Binding Output2State}" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                                <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" MinWidth="80">输出信号2</TextBlock>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,10,0" MinWidth="120">
+                                <StackPanel MinWidth="25">
+                                    <CheckBox cal:Message.Attach="SetOutput3" IsChecked="{Binding Output3State}" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                                <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" MinWidth="80">输出信号3</TextBlock>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,10,0" MinWidth="120">
+                                <StackPanel MinWidth="25">
+                                    <CheckBox cal:Message.Attach="SetOutput4" IsChecked="{Binding Output4State}" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                                <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" MinWidth="80">输出信号4</TextBlock>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Margin="0,10,0,0">
+                    <TextBlock Margin="20,0,10,0" VerticalAlignment="Center" MinWidth="80">输入IO</TextBlock>
+                    <StackPanel Margin="40,0,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,10,0" MinWidth="120">
+                                <StackPanel MinWidth="25">
+                                    <Ellipse Width="20" Height="20" Fill="{Binding Input0State, Converter={StaticResource BoolToColorConverter}}"/>
+                                </StackPanel>
+                                <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" MinWidth="80">输入信号0</TextBlock>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,10,0" MinWidth="120">
+                                <StackPanel MinWidth="25">
+                                    <Ellipse Width="20" Height="20" Fill="{Binding Input1State, Converter={StaticResource BoolToColorConverter}}"/>
+                                </StackPanel>
+                                <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" MinWidth="80">输入信号1</TextBlock>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,10,0" MinWidth="120">
+                                <StackPanel MinWidth="25">
+                                    <Ellipse Width="20" Height="20" Fill="{Binding Input2State, Converter={StaticResource BoolToColorConverter}}"/>
+                                </StackPanel>
+                                <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" MinWidth="80">输入信号2</TextBlock>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,10,0" MinWidth="120">
+                                <StackPanel MinWidth="25">
+                                    <Ellipse Width="20" Height="20" Fill="{Binding Input3State, Converter={StaticResource BoolToColorConverter}}"/>
+                                </StackPanel>
+                                <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" MinWidth="80">输入信号3</TextBlock>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,10,0" MinWidth="120">
+                                <StackPanel MinWidth="25">
+                                    <Ellipse Width="20" Height="20" Fill="{Binding Input4State, Converter={StaticResource BoolToColorConverter}}"/>
+                                </StackPanel>
+                                <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" MinWidth="80">输入信号4</TextBlock>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Margin="0,20,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button cal:Message.Attach="Start" IsEnabled="{Binding IsStart, Converter={StaticResource BoolToInvertConverter}}" Width="80" Content="开始" Margin="10,0"/>
+                <Button cal:Message.Attach="Stop" IsEnabled="{Binding IsStart}" Width="80" Content="停止" Margin="10,0"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

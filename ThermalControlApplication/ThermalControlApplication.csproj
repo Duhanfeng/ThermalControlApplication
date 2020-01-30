@@ -91,6 +91,17 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\DhfLib.Communication.IModbusRtuMaster.datasource" />
+    <None Include="Properties\DataSources\DhfLib.Communication.ModbusRtuMaster.datasource" />
+    <None Include="Properties\DataSources\DhfLib.Serialization.JsonSerialization.datasource" />
+    <None Include="Properties\DataSources\MainForm.datasource" />
+    <None Include="Properties\DataSources\McuControl.datasource" />
+    <None Include="Properties\DataSources\McuSimulation.datasource" />
+    <None Include="Properties\DataSources\MultiStepSettingForm.datasource" />
+    <None Include="Properties\DataSources\Program.datasource" />
+    <None Include="Properties\DataSources\TempStepData.datasource" />
+    <None Include="Properties\DataSources\ThermalControlApplication.Properties.Resources.datasource" />
+    <None Include="Properties\DataSources\ThermalControlApplication.Properties.Settings.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
