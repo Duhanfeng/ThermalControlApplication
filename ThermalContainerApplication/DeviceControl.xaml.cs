@@ -24,11 +24,14 @@ namespace ThermalContainerApplication
     /// </summary>
     public partial class DeviceControl : UserControl
     {
+        private DeviceControlViewModel _model;
+
         public DeviceControl()
         {
             InitializeComponent();
 
-            DataContext = new DeviceControlViewModel();
+            _model = new DeviceControlViewModel();
+            DataContext = _model;
         }
 
         /// <summary>
@@ -56,6 +59,21 @@ namespace ThermalContainerApplication
             TextBox tb = sender as TextBox;
             BindingExpression be = tb.GetBindingExpression(TextBox.TextProperty);
             be.UpdateSource();
+        }
+
+        /// <summary>
+        /// 设备名
+        /// </summary>
+        public string DeviceName 
+        { 
+            get
+            {
+                return _model.DeviceName;
+            }
+            set
+            {
+                _model.DeviceName = value;
+            }
         }
     }
 
@@ -188,6 +206,17 @@ namespace ThermalContainerApplication
 
         #region 设备状态
 
+        private string _deviceName = "通道X";
+
+        /// <summary>
+        /// 设备名
+        /// </summary>
+        public string DeviceName
+        {
+            get { return _deviceName; }
+            set { _deviceName = value; }
+        }
+
         private string _workStatus = "未连接";
 
         /// <summary>
@@ -257,6 +286,7 @@ namespace ThermalContainerApplication
         public void ConfigMultiStepMode()
         {
             MultiStepSettingWindow window = new MultiStepSettingWindow();
+            window.DeviceName = DeviceName;
             window.Show();
         }
 

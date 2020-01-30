@@ -10,7 +10,7 @@
                       xmlns:converters="clr-namespace:ThermalContainerApplication.Converters"
                       mc:Ignorable="d"
                       d:DataContext="{d:DesignInstance local:MainWindowViewModel}"
-                      Title="MainWindow" Height="800" Width="1200" MinHeight="800" MinWidth="1200">
+                      Title="MainWindow" Height="850" Width="1200" MinHeight="850" MinWidth="1200">
     <Window.Resources>
         <ResourceDictionary>
             <converters:BoolToInvertConverter x:Key="BoolToInvertConverter" />

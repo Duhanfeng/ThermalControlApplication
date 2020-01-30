@@ -13,21 +13,25 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Grid.Row="0" DockPanel.Dock="Top" Margin="0,10,0,0">
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,10,0,0">
+            <TextBlock Margin="0,0,10,0" VerticalAlignment="Center" MinWidth="60">通道名</TextBlock>
+            <TextBox Text="{Binding DeviceName}" IsReadOnly="True" MinWidth="120" Margin="0,0,10,0"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,10,0,0">
             <TextBlock Margin="0,0,10,0" VerticalAlignment="Center" MinWidth="60">温度</TextBlock>
             <TextBox Text="{Binding Temp, StringFormat={}{0:F3}, UpdateSourceTrigger=Explicit}" KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus" MinWidth="120" Margin="0,0,10,0"/>
             <TextBlock Margin="0,0,10,0" VerticalAlignment="Center" MinWidth="80">(摄氏度)</TextBlock>
-
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,10,0,0">
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0,10,0,0">
             <TextBlock Margin="0,0,10,0" VerticalAlignment="Center" MinWidth="60">保温时间</TextBlock>
             <TextBox Text="{Binding KeepWarmTime, StringFormat={}{0:F3}, UpdateSourceTrigger=Explicit}" KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus" MinWidth="120" Margin="0,0,10,0"/>
             <TextBlock Margin="0,0,10,0" VerticalAlignment="Center" MinWidth="80">(分钟)</TextBlock>
         </StackPanel>
-        <Grid Grid.Row="2" Margin="0,10">
+        <Grid Grid.Row="3" Margin="0,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
@@ -40,7 +44,7 @@
             <Button cal:Message.Attach="Clear" Grid.Column="3" Margin="10,0,10,0" MinWidth="60">清空</Button>
 
         </Grid>
-        <ListView ItemsSource="{Binding MultiStepList}" Name="MultiStepListView" Grid.Row="3" Margin="0,10,0,0" SelectionMode="Single">
+        <ListView ItemsSource="{Binding MultiStepList}" Name="MultiStepListView" Grid.Row="4" Margin="0,10,0,0" SelectionMode="Single">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="温度" Width="100" DisplayMemberBinding="{Binding Path=Temp, StringFormat={}{0:F3}}"/>
@@ -48,7 +52,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="4">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="5">
             <Button cal:Message.Attach="Save" Width="80" Content="保存" Margin="10,0"/>
             <Button  Width="80" Content="取消" Margin="10,0" Click="CancelButton_Click"/>
         </StackPanel>

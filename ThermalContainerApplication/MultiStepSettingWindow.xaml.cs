@@ -22,11 +22,14 @@ namespace ThermalContainerApplication
     /// </summary>
     public partial class MultiStepSettingWindow : MetroWindow
     {
+        private MultiStepSettingWindowViewModel _model;
+
         public MultiStepSettingWindow()
         {
             InitializeComponent();
 
-            DataContext = new MultiStepSettingWindowViewModel();
+            _model = new MultiStepSettingWindowViewModel();
+            DataContext = _model;
         }
 
         /// <summary>
@@ -65,6 +68,21 @@ namespace ThermalContainerApplication
         {
             Close();
         }
+
+        /// <summary>
+        /// 设备名
+        /// </summary>
+        public string DeviceName
+        {
+            get
+            {
+                return _model.DeviceName;
+            }
+            set
+            {
+                _model.DeviceName = value;
+            }
+        }
     }
 
     public class MultiStepSettingWindowViewModel : Screen
@@ -75,6 +93,17 @@ namespace ThermalContainerApplication
         #endregion
 
         #region 配置参数
+
+        private string _deviceName = "通道X";
+
+        /// <summary>
+        /// 设备名
+        /// </summary>
+        public string DeviceName
+        {
+            get { return _deviceName; }
+            set { _deviceName = value; }
+        }
 
         private double _temp = 60;
 

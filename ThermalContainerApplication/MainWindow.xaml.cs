@@ -446,6 +446,9 @@ namespace ThermalContainerApplication
             DeviceModel1.McuControl = Device1;
             DeviceModel2.McuControl = Device2;
 
+            DeviceModel1.DeviceName = "通道1";
+            DeviceModel2.DeviceName = "通道2";
+
             //更新串口
             SerialPorts = new ObservableCollection<string>(SerialPort.GetPortNames());
             if (SerialPorts?.Count > 0)
@@ -493,7 +496,6 @@ namespace ThermalContainerApplication
         }
 
         #endregion
-
 
         #region 设备控制实例
 
