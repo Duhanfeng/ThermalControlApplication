@@ -14,6 +14,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <converters:BoolToInvertConverter x:Key="BoolToInvertConverter" />
+            <converters:EnumToStringConverter x:Key="EnumToStringConverter" />
             <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
@@ -27,7 +28,7 @@
             <DockPanel Margin="0,10,0,0">
                 <TextBlock DockPanel.Dock="Left" Margin="0,0,10,0" VerticalAlignment="Center" MinWidth="80">工作状态</TextBlock>
                 <StackPanel DockPanel.Dock="Right" Margin="10,0,10,0" MinWidth="60"/>
-                <TextBox Text="{Binding WorkStatus}" IsReadOnly="True"/>
+                <TextBox Text="{Binding WorkStatus, Converter={StaticResource EnumToStringConverter}}" IsReadOnly="True"/>
             </DockPanel>
             <DockPanel Margin="0,10,0,0">
                 <TextBlock DockPanel.Dock="Left" Margin="0,0,10,0" VerticalAlignment="Center" MinWidth="80">实际温度(度)</TextBlock>

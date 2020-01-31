@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,6 +30,28 @@ namespace ThermalContainerApplication
             Temp = temp;
             KeepWarmTime = keepWarmTime;
         }
+
+    }
+
+    /// <summary>
+    /// 工作状态
+    /// </summary>
+    public enum EWorkStatus
+    {
+        [Description("未连接")]
+        Unconnect = -1,
+
+        [Description("就绪")]
+        Ready = 0,
+
+        [Description("运行中")]
+        Running,
+
+        [Description("保温中")]
+        KeepWarm,
+
+        [Description("异常")]
+        Error,
 
     }
 
@@ -103,7 +126,7 @@ namespace ThermalContainerApplication
         /// <summary>
         /// 当前工作状态
         /// </summary>
-        ushort WorkStatus { get; }
+        EWorkStatus WorkStatus { get; }
 
         /// <summary>
         /// 启动
@@ -371,11 +394,12 @@ namespace ThermalContainerApplication
         /// <summary>
         /// 当前工作状态
         /// </summary>
-        public ushort WorkStatus
+        public EWorkStatus WorkStatus
         {
             get
             {
-                return modbusRtu.ReadRegister(SlaveAddress, WorkStatusAddress);
+                var value = modbusRtu.ReadRegister(SlaveAddress, WorkStatusAddress);
+                return (EWorkStatus)Enum.Parse(typeof(EWorkStatus), value.ToString());
             }
         }
 

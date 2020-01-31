@@ -137,11 +137,11 @@ namespace ThermalContainerApplication
         /// <summary>
         /// 当前工作状态
         /// </summary>
-        public ushort WorkStatus
+        public EWorkStatus WorkStatus
         {
             get
             {
-                return 0;
+                return EWorkStatus.Ready;
             }
         }
 

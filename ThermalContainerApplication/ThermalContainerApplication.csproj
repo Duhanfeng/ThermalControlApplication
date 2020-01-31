@@ -114,10 +114,12 @@
     <Compile Include="Chart\TemperatureChartViewModel.cs" />
     <Compile Include="Chart\MeasureModel.cs" />
     <Compile Include="Converters\BoolToColorConverter.cs" />
-    <Compile Include="Converters\StateToConnectNameConverter.cs" />
     <Compile Include="Converters\BoolToInvertConverter.cs" />
+    <Compile Include="Converters\StateToConnectNameConverter.cs" />
+    <Compile Include="Converters\EnumToStringConverter.cs" />
     <Compile Include="DhfLib\Communication\IModbusRtu.cs" />
     <Compile Include="DhfLib\Communication\ModbusRtu.cs" />
+    <Compile Include="DhfLib\Infrastructure\EnumHelper.cs" />
     <Compile Include="DhfLib\Serialization\JsonSerialization.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -167,5 +169,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

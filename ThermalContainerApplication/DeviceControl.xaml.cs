@@ -109,6 +109,7 @@ namespace ThermalContainerApplication
                 //假如设备已连接,则查询相关数据
                 if (IsConnected)
                 {
+                    WorkStatus = McuControl.WorkStatus;
                     ActualTemp = McuControl?.ActualTemp ?? -1;
 
                     //读取IO状态
@@ -217,12 +218,12 @@ namespace ThermalContainerApplication
             set { _deviceName = value; }
         }
 
-        private string _workStatus = "未连接";
+        private EWorkStatus _workStatus = EWorkStatus.Unconnect;
 
         /// <summary>
         /// 设备工作状态
         /// </summary>
-        public string WorkStatus
+        public EWorkStatus WorkStatus
         {
             get { return _workStatus; }
             set { _workStatus = value; NotifyOfPropertyChange(() => WorkStatus); }
