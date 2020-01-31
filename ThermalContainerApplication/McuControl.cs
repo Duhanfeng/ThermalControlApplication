@@ -44,7 +44,7 @@ namespace ThermalContainerApplication
         [Description("就绪")]
         Ready = 0,
 
-        [Description("运行中")]
+        [Description("调整温度中")]
         Running,
 
         [Description("保温中")]

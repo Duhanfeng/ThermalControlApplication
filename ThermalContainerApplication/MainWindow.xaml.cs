@@ -472,7 +472,10 @@ namespace ThermalContainerApplication
             _updateDateTimer.Interval = TimeSpan.FromSeconds(1);
             _updateDateTimer.Tick += UpdateDateTimer_Tick;
             _updateDateTimer.Start();
-            
+
+            Device1Reports.Add(new ReportBaseData { Temp = 20});
+
+
         }
 
         /// <summary>
@@ -734,6 +737,40 @@ namespace ThermalContainerApplication
         {
             get { return _nowDate; }
             set { _nowDate = value; NotifyOfPropertyChange(() => NowDate); }
+        }
+
+        private ObservableCollection<ReportBaseData> _reports = new ObservableCollection<ReportBaseData>();
+
+        private ObservableCollection<ReportBaseData> _device1Reports = new ObservableCollection<ReportBaseData>();
+
+        /// <summary>
+        /// 设备1报告
+        /// </summary>
+        public ObservableCollection<ReportBaseData> Device1Reports
+        {
+            get { return _device1Reports; }
+            set { _device1Reports = value; NotifyOfPropertyChange(() => Device1Reports); }
+        }
+
+        private ObservableCollection<ReportBaseData> _device2Reports = new ObservableCollection<ReportBaseData>();
+
+        /// <summary>
+        /// 设备2报告
+        /// </summary>
+        public ObservableCollection<ReportBaseData> Device2Reports
+        {
+            get { return _device2Reports; }
+            set { _device2Reports = value; NotifyOfPropertyChange(() => Device2Reports); }
+        }
+
+        /// <summary>
+        /// 显示报告
+        /// </summary>
+        public void ShowReport()
+        {
+            var window = new ReportWindow(Device1Reports, Device2Reports);
+            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            window.Show();
         }
 
         #endregion
