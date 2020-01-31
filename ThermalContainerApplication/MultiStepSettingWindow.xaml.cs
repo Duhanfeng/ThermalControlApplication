@@ -30,6 +30,18 @@ namespace ThermalContainerApplication
 
             _model = new MultiStepSettingWindowViewModel();
             DataContext = _model;
+            _model.SettingCompleted += Model_SettingCompleted;
+        }
+
+        /// <summary>
+        /// 设置完成事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Model_SettingCompleted(object sender, MultiStepSettingCompletedEventArgs e)
+        {
+            Close();
+
         }
 
         /// <summary>
@@ -66,29 +78,52 @@ namespace ThermalContainerApplication
         /// <param name="e"></param>
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            Close();
+            if (MessageBox.Show("是否要确认退出?", "退出", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+            {
+                Close();
+            }
+            
+        }
+
+    }
+
+    public class MultiStepSettingCompletedEventArgs : EventArgs
+    {
+        /// <summary>
+        /// 创建MultiStepSettingCompletedEventArgs新实例
+        /// </summary>
+        /// <param name="multiStepList">成功标志</param>
+        public MultiStepSettingCompletedEventArgs(IList<TempStepData> multiStepList)
+        {
+            MultiStepList = multiStepList;
+
         }
 
         /// <summary>
-        /// 设备名
+        /// 多段设置列表
         /// </summary>
-        public string DeviceName
-        {
-            get
-            {
-                return _model.DeviceName;
-            }
-            set
-            {
-                _model.DeviceName = value;
-            }
-        }
+        public IList<TempStepData> MultiStepList { get; set; }
+
     }
 
     public class MultiStepSettingWindowViewModel : Screen
     {
-
         #region 事件
+
+        /// <summary>
+        /// 设置完成事件
+        /// </summary>
+        public event EventHandler<MultiStepSettingCompletedEventArgs> SettingCompleted;
+
+        /// <summary>
+        /// 设置完成
+        /// </summary>
+        protected void OnSettingCompleted(IList<TempStepData> multiStepList)
+        {
+            //触发事件
+            SettingCompleted?.Invoke(this, new MultiStepSettingCompletedEventArgs(multiStepList));
+
+        }
 
         #endregion
 
@@ -195,9 +230,12 @@ namespace ThermalContainerApplication
         /// </summary>
         public void Save()
         {
-            //触发事件
+            if (MessageBox.Show("是否确认要将配置写入设备中?", "写入配置", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+            {
+                OnSettingCompleted(MultiStepList);
+            }
+            
         }
-
 
         #endregion
     }

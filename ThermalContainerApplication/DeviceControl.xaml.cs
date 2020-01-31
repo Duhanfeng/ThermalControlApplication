@@ -286,8 +286,21 @@ namespace ThermalContainerApplication
         public void ConfigMultiStepMode()
         {
             MultiStepSettingWindow window = new MultiStepSettingWindow();
-            window.DeviceName = DeviceName;
+            var model = window.DataContext as MultiStepSettingWindowViewModel;
+            model.DeviceName = DeviceName;
+            model.SettingCompleted += Model_SettingCompleted;
+            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             window.Show();
+        }
+
+        /// <summary>
+        /// 设置完成事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Model_SettingCompleted(object sender, MultiStepSettingCompletedEventArgs e)
+        {
+            McuControl?.SetMultiStep(e.MultiStepList);
         }
 
         private double _presetTemp;

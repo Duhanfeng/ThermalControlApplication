@@ -123,7 +123,11 @@ namespace ThermalContainerApplication
         /// <param name="tempSteps"></param>
         public void SetMultiStep(IList<TempStepData> tempSteps)
         {
-
+            Console.WriteLine($"设置多段:({tempSteps.Count}段)");
+            foreach (var item in tempSteps)
+            {
+                Console.WriteLine($"    温度:{item.Temp}  保温时间:{item.KeepWarmTime}");   
+            }
         }
 
         #endregion

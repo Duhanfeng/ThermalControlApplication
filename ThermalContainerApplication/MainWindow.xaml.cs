@@ -438,6 +438,8 @@ namespace ThermalContainerApplication
         /// </summary>
         private DispatcherTimer dispatcherTimer = new DispatcherTimer();
 
+        private DispatcherTimer _dateTimer = new DispatcherTimer();
+
         /// <summary>
         /// 创建MainWindowViewModel新实例
         /// </summary>
@@ -461,6 +463,22 @@ namespace ThermalContainerApplication
             dispatcherTimer.Interval = TimeSpan.FromMilliseconds(2000);
             dispatcherTimer.Tick += DispatcherTimer_Tick;
             dispatcherTimer.Start();
+
+            //启动日期定时器
+            _dateTimer.Interval = TimeSpan.FromSeconds(1);
+            _dateTimer.Tick += DateTimer_Tick;
+            _dateTimer.Start();
+        }
+
+        /// <summary>
+        /// 更新时间定时器任务
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DateTimer_Tick(object sender, EventArgs e)
+        {
+            NowDate = DateTime.Now.ToString(@"yyyy/MM/dd HH:mm:ss");
+
         }
 
         /// <summary>
@@ -685,5 +703,19 @@ namespace ThermalContainerApplication
 
         #endregion
 
+        #region 其他
+
+        private string _nowDate;
+
+        /// <summary>
+        /// 当前时间
+        /// </summary>
+        public string NowDate
+        {
+            get { return _nowDate; }
+            set { _nowDate = value; NotifyOfPropertyChange(() => NowDate); }
+        }
+
+        #endregion
     }
 }
