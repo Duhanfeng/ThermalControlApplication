@@ -12,32 +12,34 @@
     <Grid>
         <lvc:CartesianChart Grid.Row="1" LegendLocation="Top">
             <lvc:CartesianChart.Series>
-                <lvc:LineSeries Values="{Binding ActualChannel1}" 
-                                LineSmoothness="1"
-                                StrokeThickness="2" 
-                                Stroke="#F34336"
-                                Fill="Transparent"
-                                Title="通道1(当前)"/>
-                <lvc:LineSeries Values="{Binding ActualChannel2}" 
-                                LineSmoothness="1"
-                                StrokeThickness="2" 
-                                Stroke="Green"
-                                Fill="Transparent"
-                                Title="通道2(当前)"/>
                 <lvc:LineSeries Values="{Binding PresetChannel1}" 
                                 PointGeometry="{x:Null}" 
                                 LineSmoothness="1"
-                                StrokeThickness="3" 
-                                Stroke="OrangeRed"
+                                StrokeThickness="2" 
+                                Stroke="Orange"
                                 Fill="Transparent"
                                 Title="通道1(预设)"/>
+                <lvc:LineSeries Values="{Binding ActualChannel1}" 
+                                PointGeometry="{x:Null}" 
+                                LineSmoothness="1"
+                                StrokeThickness="1" 
+                                Stroke="Red"
+                                Fill="Transparent"
+                                Title="通道1(当前)"/>
                 <lvc:LineSeries Values="{Binding PresetChannel2}" 
                                 PointGeometry="{x:Null}" 
                                 LineSmoothness="1"
-                                StrokeThickness="3" 
-                                Stroke="LightGreen"
+                                StrokeThickness="2" 
+                                Stroke="DeepSkyBlue"
                                 Fill="Transparent"
                                 Title="通道2(预设)"/>
+                <lvc:LineSeries Values="{Binding ActualChannel2}" 
+                                PointGeometry="{x:Null}" 
+                                LineSmoothness="1"
+                                StrokeThickness="1" 
+                                Stroke="Blue"
+                                Fill="Transparent"
+                                Title="通道2(当前)"/>
             </lvc:CartesianChart.Series>
             <lvc:CartesianChart.AxisX>
                 <lvc:Axis LabelFormatter="{Binding DateTimeFormatter}" 

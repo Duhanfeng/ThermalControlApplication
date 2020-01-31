@@ -17,5 +17,17 @@ namespace ThermalContainerApplication.Chart
         /// 显示值(Y值)
         /// </summary>
         public double Value { get; set; }
+
+
+        public MeasureModel()
+        {
+
+        }
+
+        public MeasureModel(DateTime dateTime, double value)
+        {
+            DateTime = dateTime;
+            Value = value;
+        }
     }
 }

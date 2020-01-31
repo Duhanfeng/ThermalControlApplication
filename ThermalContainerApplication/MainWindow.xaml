@@ -8,6 +8,7 @@
                       xmlns:local="clr-namespace:ThermalContainerApplication"
                       xmlns:cal="http://www.caliburnproject.org"
                       xmlns:converters="clr-namespace:ThermalContainerApplication.Converters"
+                      cal:Message.Attach="[Event Loaded] = [Action Init]" 
                       mc:Ignorable="d"
                       d:DataContext="{d:DesignInstance local:MainWindowViewModel}"
                       Title="温度控制系统 -- power by Duhanfeng" Height="850" Width="1200" MinHeight="850" MinWidth="1200">
@@ -188,7 +189,7 @@
                 </ListView>
             </Grid>
             <Grid Background="LightGray">
-                <Chart:TemperatureChart />
+                <Chart:TemperatureChart DataContext="{Binding ChartViewModel}" />
             </Grid>
         </DockPanel>
 

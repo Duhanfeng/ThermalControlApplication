@@ -7,6 +7,7 @@
                       xmlns:cal="http://www.caliburnproject.org"
                       xmlns:local="clr-namespace:ThermalContainerApplication"
                       mc:Ignorable="d"
+                      d:DataContext="{d:DesignInstance local:MultiStepSettingCompletedEventArgs}"
                       Title="多段温度设置界面" Height="600" Width="400" MinHeight="400" MinWidth="350">
     <Grid Margin="10">
         <Grid.RowDefinitions>

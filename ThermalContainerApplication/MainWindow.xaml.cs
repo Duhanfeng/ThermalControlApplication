@@ -17,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using ThermalContainerApplication.Chart;
 
 namespace ThermalContainerApplication
 {
@@ -434,11 +435,14 @@ namespace ThermalContainerApplication
         #region 初始化
 
         /// <summary>
-        /// 定时器
+        /// 更新图表定时器
         /// </summary>
-        private DispatcherTimer dispatcherTimer = new DispatcherTimer();
+        private DispatcherTimer _updateChartTimer = new DispatcherTimer();
 
-        private DispatcherTimer _dateTimer = new DispatcherTimer();
+        /// <summary>
+        /// 更新时间定时器
+        /// </summary>
+        private DispatcherTimer _updateDateTimer = new DispatcherTimer();
 
         /// <summary>
         /// 创建MainWindowViewModel新实例
@@ -459,15 +463,27 @@ namespace ThermalContainerApplication
                 Device2SerialPortName = SerialPorts[0];
             }
 
-            //启动定时器
-            dispatcherTimer.Interval = TimeSpan.FromMilliseconds(2000);
-            dispatcherTimer.Tick += DispatcherTimer_Tick;
-            dispatcherTimer.Start();
+            //启动更新图表定时器
+            _updateChartTimer.Interval = TimeSpan.FromSeconds(2);
+            _updateChartTimer.Tick += UpdateChartTimer_Tick;
+            _updateChartTimer.Start();
 
-            //启动日期定时器
-            _dateTimer.Interval = TimeSpan.FromSeconds(1);
-            _dateTimer.Tick += DateTimer_Tick;
-            _dateTimer.Start();
+            //启动更新日期定时器
+            _updateDateTimer.Interval = TimeSpan.FromSeconds(1);
+            _updateDateTimer.Tick += UpdateDateTimer_Tick;
+            _updateDateTimer.Start();
+            
+        }
+
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        public void Init()
+        {
+            ChartLimitSeconds = 30 * 60;
+            ChartStepSeconds = 3 * 60;
+            ChartUpdateSeconds = 10;
+            UpdateChartConfig();
         }
 
         /// <summary>
@@ -475,7 +491,7 @@ namespace ThermalContainerApplication
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void DateTimer_Tick(object sender, EventArgs e)
+        private void UpdateDateTimer_Tick(object sender, EventArgs e)
         {
             NowDate = DateTime.Now.ToString(@"yyyy/MM/dd HH:mm:ss");
 
@@ -486,30 +502,34 @@ namespace ThermalContainerApplication
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void DispatcherTimer_Tick(object sender, EventArgs e)
+        private void UpdateChartTimer_Tick(object sender, EventArgs e)
         {
             try
             {
-                ////假如通道1已连接,则查询相关数据
-                //if (IsChannel1Connected)
-                //{
-                //    Channel1ActualTemp = Channel1Mcu.ActualTemp;
+                double actualTemp1 = 0;
+                double actualTemp2 = 0;
 
-                //    //读取IO状态
-                //    var inputs = Channel1Mcu.ReadAllInputIOStatus();
-                //    var outputs = Channel1Mcu.ReadAllOutputIOStatus();
+                if (IsDevice1Connect)
+                {
+                    ChartViewModel.PresetTemp1 = DeviceModel1.PresetTemp;
+                    actualTemp1 = DeviceModel1.ActualTemp;
+                }
+                if (IsDevice2Connect)
+                {
+                    ChartViewModel.PresetTemp2 = DeviceModel2.PresetTemp;
+                    actualTemp2 = DeviceModel2.ActualTemp;
+                }
 
-                //    SetChannel1AllInputs(inputs);
-                //    SetChannel1AllOutputs(outputs);
-                //}
+                if (IsDevice1Connect || IsDevice2Connect)
+                {
+                    ChartViewModel.AddChannelData(actualTemp1, actualTemp2);
+                }
+
             }
             catch (Exception)
             {
 
             }
-
-
-
 
         }
 
@@ -714,6 +734,67 @@ namespace ThermalContainerApplication
         {
             get { return _nowDate; }
             set { _nowDate = value; NotifyOfPropertyChange(() => NowDate); }
+        }
+
+        #endregion
+
+        #region 图表控件模型
+
+        private TemperatureChartViewModel _chartViewModel = new TemperatureChartViewModel();
+
+        /// <summary>
+        /// 图表控件模型实例
+        /// </summary>
+        public TemperatureChartViewModel ChartViewModel
+        {
+            get { return _chartViewModel; }
+            set { _chartViewModel = value; NotifyOfPropertyChange(() => ChartViewModel); }
+        }
+
+        private long _chartLimitSeconds = 30 * 60;
+
+        /// <summary>
+        /// 图表X轴显示时长(单位S)
+        /// </summary>
+        public long ChartLimitSeconds
+        {
+            get { return _chartLimitSeconds; }
+            set { _chartLimitSeconds = value; NotifyOfPropertyChange(() => ChartLimitSeconds); }
+        }
+
+        private long _chartStepSeconds = 60;
+
+        /// <summary>
+        /// 图表单格时长(单位:S)
+        /// </summary>
+        public long  ChartStepSeconds
+        {
+            get { return _chartStepSeconds; }
+            set { _chartStepSeconds = value; NotifyOfPropertyChange(() => ChartStepSeconds); }
+        }
+
+        private int _chartUpdateSeconds = 5;
+
+        /// <summary>
+        /// 图表更新时间(单位:S)
+        /// </summary>
+        public int ChartUpdateSeconds
+        {
+            get { return _chartUpdateSeconds; }
+            set { _chartUpdateSeconds = value; NotifyOfPropertyChange(() => ChartUpdateSeconds); }
+        }
+
+        /// <summary>
+        /// 更新图表配置
+        /// </summary>
+        public void UpdateChartConfig()
+        {
+            ChartViewModel.ChartLimitSeconds = ChartLimitSeconds;
+            ChartViewModel.ChartStepSeconds = ChartStepSeconds;
+            ChartViewModel.ChartUpdateSeconds = ChartUpdateSeconds;
+            _updateChartTimer.Stop();
+            _updateChartTimer.Interval = TimeSpan.FromSeconds(ChartUpdateSeconds);
+            _updateChartTimer.Start();
         }
 
         #endregion

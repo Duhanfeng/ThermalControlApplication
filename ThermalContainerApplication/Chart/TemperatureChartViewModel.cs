@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ThermalContainerApplication.Chart
 {
-    class TemperatureChartViewModel : Screen
+    public class TemperatureChartViewModel : Screen
     {
         public TemperatureChartViewModel()
         {
@@ -20,11 +20,14 @@ namespace ThermalContainerApplication.Chart
             //lets save the mapper globally.
             Charting.For<MeasureModel>(mapper);
 
-            DateTimeFormatter = value => new DateTime((long)value).ToString("mm:ss");
+            //设置时间格式化器
+            DateTimeFormatter = value => new DateTime((long)value).ToString("HH:mm");
             AxisUnit = TimeSpan.TicksPerSecond;
             //AxisUnit = TimeSpan.TicksPerMillisecond * 200;
             
-            AxisStep = TimeSpan.FromSeconds(1).Ticks;
+            AxisStep = TimeSpan.FromMinutes(1).Ticks;
+            //AxisStep = TimeSpan.FromSeconds(1).Ticks;
+
             SetAxisLimits(DateTime.Now);
         }
 
@@ -112,7 +115,7 @@ namespace ThermalContainerApplication.Chart
         private double _axisUnit;
 
         /// <summary>
-        /// X轴单元?
+        /// 轴数据更新时间
         /// </summary>
         public double AxisUnit
         {
@@ -148,11 +151,65 @@ namespace ThermalContainerApplication.Chart
         /// <param name="now"></param>
         private void SetAxisLimits(DateTime now)
         {
+            //AxisMax = now.Ticks + TimeSpan.FromSeconds(AxisAheadTime).Ticks; // lets force the axis to be 1 second ahead
+            //AxisMin = now.Ticks - TimeSpan.FromSeconds(AxisBehindTime).Ticks; // and 8 seconds behind
+
             AxisMax = now.Ticks + TimeSpan.FromSeconds(AxisAheadTime).Ticks; // lets force the axis to be 1 second ahead
             AxisMin = now.Ticks - TimeSpan.FromSeconds(AxisBehindTime).Ticks; // and 8 seconds behind
+
         }
 
         #endregion
+
+        #endregion
+
+        #region 图表设置
+
+        private long _chartLimitSeconds = 30 * 60;
+
+        /// <summary>
+        /// 图表X轴显示时长(单位S)
+        /// </summary>
+        public long ChartLimitSeconds
+        {
+            get { return _chartLimitSeconds; }
+            set { _chartLimitSeconds = value; NotifyOfPropertyChange(() => ChartLimitSeconds); AxisBehindTime = (int)(value * 0.9); AxisAheadTime = (int)(value * 0.1); }
+        }
+
+        private long _chartStepSeconds = 60;
+
+        /// <summary>
+        /// 图表单格时长(单位:S)
+        /// </summary>
+        public long ChartStepSeconds
+        {
+            get { return _chartStepSeconds; }
+            set { _chartStepSeconds = value; NotifyOfPropertyChange(() => ChartStepSeconds); AxisStep = TimeSpan.FromSeconds(value).Ticks;}
+        }
+
+        private int _chartUpdateSeconds = 5;
+
+        /// <summary>
+        /// 图表更新时间(单位:S)
+        /// </summary>
+        public int ChartUpdateSeconds
+        {
+            get { return _chartUpdateSeconds; }
+            set { _chartUpdateSeconds = value; NotifyOfPropertyChange(() => ChartUpdateSeconds); }
+        }
+
+        /// <summary>
+        /// 图表最大点数
+        /// </summary>
+        public int ChartMaxPointCount
+        {
+            get
+            {
+                int count = (int)(ChartLimitSeconds / ChartUpdateSeconds);
+
+                return count;
+            }
+        }
 
         #endregion
 
@@ -183,55 +240,83 @@ namespace ThermalContainerApplication.Chart
         }
 
         /// <summary>
+        /// 更新X轴
+        /// </summary>
+        private void UpdateXAxis(DateTime now)
+        {
+            SetAxisLimits(now);
+
+            if (PresetChannel1.Count == 0)
+            {
+                PresetChannel1.Add(new MeasureModel(new DateTime((long)AxisMin), PresetTemp1));
+                PresetChannel1.Add(new MeasureModel(new DateTime((long)AxisMax), PresetTemp1));
+            }
+            else
+            {
+                PresetChannel1[0].DateTime = new DateTime((long)AxisMin);
+                PresetChannel1[0].Value = PresetTemp1;
+                PresetChannel1[1].DateTime = new DateTime((long)AxisMax);
+                PresetChannel1[1].Value = PresetTemp1;
+            }
+
+            if (PresetChannel2.Count == 0)
+            {
+                PresetChannel2.Add(new MeasureModel(new DateTime((long)AxisMin), PresetTemp2));
+                PresetChannel2.Add(new MeasureModel(new DateTime((long)AxisMax), PresetTemp2));
+            }
+            else
+            {
+                PresetChannel2[0].DateTime = new DateTime((long)AxisMin);
+                PresetChannel2[0].Value = PresetTemp2;
+                PresetChannel2[1].DateTime = new DateTime((long)AxisMax);
+                PresetChannel2[1].Value = PresetTemp2;
+            }
+
+        }
+
+        /// <summary>
         /// 增加通道数据
         /// </summary>
         /// <param name="channel1">通道1</param>
         /// <param name="channel2">通道2</param>
         public void AddChannelData(double channel1, double channel2)
         {
-            //复制数据
-            var actualChannel1 = ActualChannel1;
-            var actualChannel2 = ActualChannel2;
-            var presetChannel1 = PresetChannel1;
-            var presetChannel2 = PresetChannel2;
-
             //更新数据
             var now = DateTime.Now;
-            actualChannel1.Add(new MeasureModel { DateTime = now, Value = channel1 });
-            actualChannel2.Add(new MeasureModel { DateTime = now, Value = channel2 });
 
-            presetChannel1.Add(new MeasureModel { DateTime = now, Value = PresetTemp1 });
-            presetChannel2.Add(new MeasureModel { DateTime = now, Value = PresetTemp2 });
+            //ChartValues<MeasureModel> actualChannel1 = new ChartValues<MeasureModel>(ActualChannel1);
+            //ChartValues<MeasureModel> actualChannel2 = new ChartValues<MeasureModel>(ActualChannel2);
+            //actualChannel1.Add(new MeasureModel { DateTime = now, Value = channel1 });
+            //actualChannel2.Add(new MeasureModel { DateTime = now, Value = channel2 });
+
+            ////限制数据长度
+            //if (actualChannel1.Count > ChartMaxPointCount)
+            //{
+            //    actualChannel1.RemoveAt(0);
+            //}
+            //if (actualChannel2.Count > ChartMaxPointCount)
+            //{
+            //    actualChannel2.RemoveAt(0);
+            //}
+            //ActualChannel1 = actualChannel1;
+            //ActualChannel2 = actualChannel2;
+
+            ActualChannel1.Add(new MeasureModel { DateTime = now, Value = channel1 });
+            ActualChannel2.Add(new MeasureModel { DateTime = now, Value = channel2 });
 
             //限制数据长度
-            if (actualChannel1.Count > 15)
+            if (ActualChannel1.Count > ChartMaxPointCount)
             {
-                actualChannel1.RemoveAt(0);
+                ActualChannel1.RemoveAt(0);
             }
-            if (actualChannel2.Count > 15)
+            if (ActualChannel2.Count > ChartMaxPointCount)
             {
-                actualChannel2.RemoveAt(0);
+                ActualChannel2.RemoveAt(0);
             }
-            if (presetChannel1.Count > 15)
-            {
-                presetChannel1.RemoveAt(0);
-            }
-            if (presetChannel2.Count > 15)
-            {
-                presetChannel2.RemoveAt(0);
-            }
-
-
-            ActualChannel1 = actualChannel1;
-            ActualChannel2 = actualChannel2;
-            PresetChannel1 = presetChannel1;
-            PresetChannel2 = presetChannel2;
 
             //更新X轴范围
-            SetAxisLimits(now);
-
+            UpdateXAxis(now);
         }
-
 
         #endregion
 
