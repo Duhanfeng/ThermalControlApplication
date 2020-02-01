@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using DhfLib.Infrastructure;
 using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
@@ -67,371 +68,6 @@ namespace ThermalContainerApplication
     /// </summary>
     public class MainWindowViewModel : Screen
     {
-
-#if false
-
-        
-        #region 通道1
-
-        #region 通信
-
-        private string _channel1SerialPortName;
-
-        /// <summary>
-        /// 通道1串口
-        /// </summary>
-        public string Channel1SerialPortName
-        {
-            get { return _channel1SerialPortName; }
-            set { _channel1SerialPortName = value; NotifyOfPropertyChange(() => Channel1SerialPortName); }
-        }
-
-        private string _channel1ConnectName = "连接";
-
-        /// <summary>
-        /// 通道1连接按键名
-        /// </summary>
-        public string Channel1ConnectName
-        {
-            get { return _channel1ConnectName; }
-            set { _channel1ConnectName = value; NotifyOfPropertyChange(() => Channel1ConnectName); }
-        }
-
-        private bool _isChannel1Connected = false;
-
-        /// <summary>
-        /// 通道1连接标志
-        /// </summary>
-        public bool IsChannel1Connected
-        {
-            get { return _isChannel1Connected; }
-            set { _isChannel1Connected = value; NotifyOfPropertyChange(() => IsChannel1Connected); }
-        }
-
-        #endregion
-
-        #region 设备状态
-
-        private string _channel1WorkStatus = "未连接";
-
-        /// <summary>
-        /// 通道1工作状态
-        /// </summary>
-        public string Channel1WorkStatus
-        {
-            get { return _channel1WorkStatus; }
-            set { _channel1WorkStatus = value; NotifyOfPropertyChange(() => Channel1WorkStatus); }
-        }
-
-        private double _channel1ActualTemp;
-
-        /// <summary>
-        /// 通道1实际温度值
-        /// </summary>
-        public double Channel1ActualTemp
-        {
-            get { return _channel1ActualTemp; }
-            set { _channel1ActualTemp = value; NotifyOfPropertyChange(() => Channel1ActualTemp); }
-        }
-
-        #endregion
-
-        #region 温度模式
-
-        private bool _isChannel1MultiStepMode;
-
-        public bool IsChannel1MultiStepMode
-        {
-            get { return _isChannel1MultiStepMode; }
-            set { _isChannel1MultiStepMode = value; NotifyOfPropertyChange(() => IsChannel1MultiStepMode); }
-        }
-
-        /// <summary>
-        /// 设置通道1为单段模式
-        /// </summary>
-        public void SetChannel1OneStepModel()
-        {
-            IsChannel1MultiStepMode = false;
-            Channel1Mcu.TempMode = 0;
-        }
-
-        /// <summary>
-        /// 设置通道1为多段模式
-        /// </summary>
-        public void SetChannel1MultiStepModel()
-        {
-            IsChannel1MultiStepMode = true;
-            Channel1Mcu.TempMode = 1;
-        }
-
-        private double _channel1PresetTemp;
-
-        /// <summary>
-        /// 预设温度值
-        /// </summary>
-        public double Channel1PresetTemp
-        {
-            get { return _channel1PresetTemp; }
-            set { _channel1PresetTemp = value; NotifyOfPropertyChange(() => Channel1PresetTemp); }
-        }
-
-
-        /// <summary>
-        /// 设置通道1预设温度值
-        /// </summary>
-        /// <param name="temp">温度值(摄氏度)</param>
-        public void SetChannel1PresetTemp()
-        {
-            if (Channel1PresetTemp < -30)
-            {
-                Channel1PresetTemp = -30;
-            }
-            if (Channel1PresetTemp > 90)
-            {
-                Channel1PresetTemp = 90;
-            }
-
-            //写入数据
-            Channel1Mcu.PresetTemp = Channel1PresetTemp;
-        }
-
-        #endregion
-
-        #region IO
-
-        #region 输入IO
-
-        private bool _channel1Input0State;
-
-        /// <summary>
-        /// 通道1输入0状态
-        /// </summary>
-        public bool Channel1Input0State
-        {
-            get { return _channel1Input0State; }
-            set { _channel1Input0State = value; NotifyOfPropertyChange(() => Channel1Input0State); }
-        }
-
-        private bool _channel1Input1State;
-
-        /// <summary>
-        /// 通道1输入1状态
-        /// </summary>
-        public bool Channel1Input1State
-        {
-            get { return _channel1Input1State; }
-            set { _channel1Input1State = value; NotifyOfPropertyChange(() => Channel1Input1State); }
-        }
-
-        private bool _channel1Input2State;
-
-        /// <summary>
-        /// 通道1输入2状态
-        /// </summary>
-        public bool Channel1Input2State
-        {
-            get { return _channel1Input2State; }
-            set { _channel1Input2State = value; NotifyOfPropertyChange(() => Channel1Input2State); }
-        }
-
-        private bool _channel1Input3State;
-
-        /// <summary>
-        /// 通道1输入3状态
-        /// </summary>
-        public bool Channel1Input3State
-        {
-            get { return _channel1Input3State; }
-            set { _channel1Input3State = value; NotifyOfPropertyChange(() => Channel1Input3State); }
-        }
-
-        private bool _channel1Input4State;
-
-        /// <summary>
-        /// 通道1输入4状态
-        /// </summary>
-        public bool Channel1Input4State
-        {
-            get { return _channel1Input4State; }
-            set { _channel1Input4State = value; NotifyOfPropertyChange(() => Channel1Input4State); }
-        }
-
-        #endregion
-
-        #region 输出IO
-
-        private bool _channel1Output0State;
-
-        /// <summary>
-        /// 通道1输出0状态
-        /// </summary>
-        public bool Channel1Output0State
-        {
-            get { return _channel1Output0State; }
-            set { _channel1Output0State = value; NotifyOfPropertyChange(() => Channel1Output0State); }
-        }
-
-        private bool _channel1Output1State;
-
-        /// <summary>
-        /// 通道1输出1状态
-        /// </summary>
-        public bool Channel1Output1State
-        {
-            get { return _channel1Output1State; }
-            set { _channel1Output1State = value; NotifyOfPropertyChange(() => Channel1Output1State); }
-        }
-
-        private bool _channel1Output2State;
-
-        /// <summary>
-        /// 通道1输出2状态
-        /// </summary>
-        public bool Channel1Output2State
-        {
-            get { return _channel1Output2State; }
-            set { _channel1Output2State = value; NotifyOfPropertyChange(() => Channel1Output2State); }
-        }
-
-        private bool _channel1Output3State;
-
-        /// <summary>
-        /// 通道1输出3状态
-        /// </summary>
-        public bool Channel1Output3State
-        {
-            get { return _channel1Output3State; }
-            set { _channel1Output3State = value; NotifyOfPropertyChange(() => Channel1Output3State); }
-        }
-
-        private bool _channel1Output4State;
-
-        /// <summary>
-        /// 通道1输出4状态
-        /// </summary>
-        public bool Channel1Output4State
-        {
-            get { return _channel1Output4State; }
-            set { _channel1Output4State = value; NotifyOfPropertyChange(() => Channel1Output4State); }
-        }
-
-        /// <summary>
-        /// 翻转输出IO0
-        /// </summary>
-        public void SetChannel1Output0()
-        {
-            Channel1Mcu.SetOutputIOStatus(0, Channel1Output0State);
-
-        }
-
-        /// <summary>
-        /// 翻转输出IO1
-        /// </summary>
-        public void SetChannel1Output1()
-        {
-            Channel1Mcu.SetOutputIOStatus(1, Channel1Output1State);
-
-        }
-
-        /// <summary>
-        /// 翻转输出IO2
-        /// </summary>
-        public void SetChannel1Output2()
-        {
-            Channel1Mcu.SetOutputIOStatus(2, Channel1Output2State);
-
-        }
-
-        /// <summary>
-        /// 翻转输出IO3
-        /// </summary>
-        public void SetChannel1Output3()
-        {
-            Channel1Mcu.SetOutputIOStatus(3, Channel1Output3State);
-
-        }
-
-        /// <summary>
-        /// 翻转输出IO4
-        /// </summary>
-        public void SetChannel1Output4()
-        {
-            Channel1Mcu.SetOutputIOStatus(4, Channel1Output4State);
-
-        }
-
-        #endregion
-
-        /// <summary>
-        /// 设置所有的输入
-        /// </summary>
-        /// <param name="inputs"></param>
-        private void SetChannel1AllInputs(bool[] inputs)
-        {
-            Channel1Input0State = (inputs.Length > 0) ? inputs[0] : false;
-            Channel1Input1State = (inputs.Length > 1) ? inputs[1] : false;
-            Channel1Input2State = (inputs.Length > 2) ? inputs[2] : false;
-            Channel1Input3State = (inputs.Length > 3) ? inputs[3] : false;
-            Channel1Input4State = (inputs.Length > 4) ? inputs[4] : false;
-        }
-
-        /// <summary>
-        /// 设置所有的输入
-        /// </summary>
-        /// <param name="inputs"></param>
-        private void SetChannel1AllOutputs(bool[] outputs)
-        {
-            Channel1Output0State = (outputs.Length > 0) ? outputs[0] : false;
-            Channel1Output1State = (outputs.Length > 1) ? outputs[1] : false;
-            Channel1Output2State = (outputs.Length > 2) ? outputs[2] : false;
-            Channel1Output3State = (outputs.Length > 3) ? outputs[3] : false;
-            Channel1Output4State = (outputs.Length > 4) ? outputs[4] : false;
-        }
-
-        #endregion
-
-        /// <summary>
-        /// 连接通道1串口
-        /// </summary>
-        public void ConnectChannel1Serial()
-        {
-            if (_isChannel1Connected)
-            {
-                //停止定时器
-
-                IsChannel1Connected = false;
-                Channel1ConnectName = "连接";
-            }
-            else
-            {
-                //设置串口号
-                Channel1Mcu.SerialPortName = Channel1SerialPortName;
-
-                //获取数据以验证连接是否成功
-                try
-                {
-                    Channel1WorkStatus = Channel1Mcu.WorkStatus.ToString();
-                    Channel1ActualTemp = Channel1Mcu.ActualTemp;
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("通信超时,请检查串口号是否正常!");
-                    return;
-                }
-
-                //开启线程轮询
-
-                IsChannel1Connected = true;
-                Channel1ConnectName = "断开";
-
-            }
-
-        }
-
-        #endregion
-
-#endif
-
         #region 初始化
 
         /// <summary>
@@ -473,9 +109,6 @@ namespace ThermalContainerApplication
             _updateDateTimer.Tick += UpdateDateTimer_Tick;
             _updateDateTimer.Start();
 
-            Device1Reports.Add(new ReportBaseData { Temp = 20});
-
-
         }
 
         /// <summary>
@@ -490,7 +123,17 @@ namespace ThermalContainerApplication
         }
 
         /// <summary>
-        /// 更新时间定时器任务
+        /// 设备1工作状态
+        /// </summary>
+        private EWorkStatus _device1WorkStatus = EWorkStatus.Unconnect;
+
+        /// <summary>
+        /// 设备2工作状态
+        /// </summary>
+        private EWorkStatus _device2WorkStatus = EWorkStatus.Unconnect;
+
+        /// <summary>
+        /// 更新时间定时器回调
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -498,10 +141,38 @@ namespace ThermalContainerApplication
         {
             NowDate = DateTime.Now.ToString(@"yyyy/MM/dd HH:mm:ss");
 
+            if (IsDevice1Connect)
+            {
+                var mode = DeviceModel1;
+                var status = mode.WorkStatus;
+                if (_device1WorkStatus != status)
+                {
+                    _device1WorkStatus = status;
+
+                    //增加消息
+                    Message = $"{mode.DeviceName} {EnumHelper.GetDescription(status)}";
+                    Device1Reports.Add(new ReportBaseData { StartTime = DateTime.Now, WorkStatus = status, Temp = mode.TargetTemp, KeepWarmTime = mode.TargetKeepWarmTime, Message = Message }); ;
+                }
+
+            }
+            if (IsDevice2Connect)
+            {
+                var mode = DeviceModel2;
+                var status = mode.WorkStatus;
+                if (_device2WorkStatus != status)
+                {
+                    _device2WorkStatus = status;
+
+                    //增加消息
+                    Message = $"{mode.DeviceName} {EnumHelper.GetDescription(status)}";
+                    Device2Reports.Add(new ReportBaseData { StartTime = DateTime.Now, WorkStatus = status, Temp = mode.TargetTemp, KeepWarmTime = mode.TargetKeepWarmTime, Message = Message }); ;
+                }
+            }
+
         }
 
         /// <summary>
-        /// 定时器回调
+        /// 更新图表定时器回调
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -514,12 +185,12 @@ namespace ThermalContainerApplication
 
                 if (IsDevice1Connect)
                 {
-                    ChartViewModel.PresetTemp1 = DeviceModel1.PresetTemp;
+                    ChartViewModel.PresetTemp1 = DeviceModel1.TargetTemp;
                     actualTemp1 = DeviceModel1.ActualTemp;
                 }
                 if (IsDevice2Connect)
                 {
-                    ChartViewModel.PresetTemp2 = DeviceModel2.PresetTemp;
+                    ChartViewModel.PresetTemp2 = DeviceModel2.TargetTemp;
                     actualTemp2 = DeviceModel2.ActualTemp;
                 }
 
@@ -739,8 +410,6 @@ namespace ThermalContainerApplication
             set { _nowDate = value; NotifyOfPropertyChange(() => NowDate); }
         }
 
-        private ObservableCollection<ReportBaseData> _reports = new ObservableCollection<ReportBaseData>();
-
         private ObservableCollection<ReportBaseData> _device1Reports = new ObservableCollection<ReportBaseData>();
 
         /// <summary>
@@ -771,6 +440,17 @@ namespace ThermalContainerApplication
             var window = new ReportWindow(Device1Reports, Device2Reports);
             window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             window.Show();
+        }
+
+        private string _message;
+
+        /// <summary>
+        /// 消息
+        /// </summary>
+        public string Message
+        {
+            get { return _message; }
+            set { _message = value; NotifyOfPropertyChange(() => Message); }
         }
 
         #endregion

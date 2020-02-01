@@ -55,6 +55,9 @@ namespace ThermalContainerApplication
 
     }
 
+    /// <summary>
+    /// 单片机控制接口
+    /// </summary>
     public interface IMcuControl
     {
         #region Modbus
@@ -104,20 +107,48 @@ namespace ThermalContainerApplication
         ushort TempMode { get; set; }
 
         /// <summary>
-        /// 预设温度
+        /// 目标温度(摄氏度)
         /// </summary>
-        double PresetTemp { get; set; }
+        double TargetTemp { get; }
 
+        /// <summary>
+        /// 目标保温时间(分钟)
+        /// </summary>
+        double TargetKeepWarmTime { get; }
+        
         /// <summary>
         /// 当前温度
         /// </summary>
-        double ActualTemp { get; }
+        double ActualTemp { get;}
+
+        #region 单段温度
+
+        /// <summary>
+        /// 单段温度
+        /// </summary>
+        double SingleStepTemp { get; set; }
+
+        #endregion
+
+        #region 多段温度
+
+        /// <summary>
+        /// 多段模式当前段
+        /// </summary>
+        ushort CurrentStep { get; }
+
+        /// <summary>
+        /// 多段模式段数
+        /// </summary>
+        ushort MultiStepCount { get; set; }
 
         /// <summary>
         /// 设置多段数据
         /// </summary>
         /// <param name="tempSteps"></param>
         void SetMultiStep(IList<TempStepData> tempSteps);
+
+        #endregion
 
         #endregion
 
@@ -129,14 +160,9 @@ namespace ThermalContainerApplication
         EWorkStatus WorkStatus { get; }
 
         /// <summary>
-        /// 启动
+        /// 启动标志
         /// </summary>
-        void Start();
-
-        /// <summary>
-        /// 停止
-        /// </summary>
-        void Stop();
+        bool IsStart { get; set; }
 
         #endregion
 
@@ -174,6 +200,8 @@ namespace ThermalContainerApplication
 
         #region 地址定义
 
+        #region 线圈地址
+
         /// <summary>
         /// 输出IO线圈地址(读写)
         /// </summary>
@@ -189,6 +217,10 @@ namespace ThermalContainerApplication
         /// </summary>
         private readonly ushort RunningControlCoilAddress = 0x20;
 
+        #endregion
+
+        #region 寄存器地址
+
         /// <summary>
         /// 工作状态地址(只读)
         /// </summary>
@@ -200,19 +232,34 @@ namespace ThermalContainerApplication
         private readonly ushort TempModeAddress = 0x02;
 
         /// <summary>
-        /// 预设温度地址(读写)
+        /// 目标温度地址(只读)
         /// </summary>
-        private readonly ushort PresetTempAddress = 0x04;
+        private readonly ushort TargetTempAddress = 0x04;
 
         /// <summary>
-        /// 当前温度地址(只读)
+        /// 目标保温时间地址(只读)
         /// </summary>
-        private readonly ushort CurrentTempAddress = 0x06;
+        private readonly ushort TargetKeepWarmTimeAddress = 0x06;
+
+        /// <summary>
+        /// 实际当前温度地址(只读)
+        /// </summary>
+        private readonly ushort ActualTempAddress = 0x08;
+
+        /// <summary>
+        /// 单段温度地址
+        /// </summary>
+        private readonly ushort SingleStepTempAddress = 0x0A;
+
+        /// <summary>
+        /// 当前段数
+        /// </summary>
+        private readonly ushort CurrentStepAddress = 0x0C;
 
         /// <summary>
         /// 多段温度段数
         /// </summary>
-        private readonly ushort MultiStepCountAddress = 0x0C;
+        private readonly ushort MultiStepCountAddress = 0x0E;
 
         /// <summary>
         /// 多段温度温度起始地址(0x10-0x4F)
@@ -220,9 +267,11 @@ namespace ThermalContainerApplication
         private readonly ushort MultiStepTempStartAddress = 0x10;
 
         /// <summary>
-        /// 多段温度保温时间起始地址(0x40-0x7F)
+        /// 多段温度保温时间起始地址(0x50-0x8F)
         /// </summary>
         private readonly ushort MultiStepTimeStartAddress = 0x40;
+
+        #endregion
 
         #endregion
 
@@ -342,17 +391,24 @@ namespace ThermalContainerApplication
         }
 
         /// <summary>
-        /// 预设温度
+        /// 目标温度(摄氏度)
         /// </summary>
-        public double PresetTemp
-        { 
+        public double TargetTemp
+        {
             get
             {
-                return ReadDouble(SlaveAddress, PresetTempAddress, 1000);
+                return ReadDouble(SlaveAddress, TargetTempAddress, 1000);
             }
-            set
+        }
+
+        /// <summary>
+        /// 目标保温时间(分钟)
+        /// </summary>
+        public double TargetKeepWarmTime
+        {
+            get
             {
-                WriteDouble(SlaveAddress, PresetTempAddress, 1000, value);
+                return ReadDouble(SlaveAddress, TargetKeepWarmTimeAddress, 1000);
             }
         }
 
@@ -360,10 +416,57 @@ namespace ThermalContainerApplication
         /// 当前温度
         /// </summary>
         public double ActualTemp
-        { 
+        {
             get
             {
-                return ReadDouble(SlaveAddress, CurrentTempAddress, 1000);
+                return ReadDouble(SlaveAddress, ActualTempAddress, 1000);
+            }
+        }
+
+        #region 单段温度
+
+        /// <summary>
+        /// 单段温度(摄氏度)
+        /// </summary>
+        public double SingleStepTemp
+        {
+            get
+            {
+                return ReadDouble(SlaveAddress, SingleStepTempAddress, 1000);
+            }
+            set
+            {
+                WriteDouble(SlaveAddress, SingleStepTempAddress, 1000, value);
+            }
+        }
+
+        #endregion
+
+        #region 多段温度
+
+        /// <summary>
+        /// 多段模式当前段
+        /// </summary>
+        public ushort CurrentStep
+        {
+            get
+            {
+                return modbusRtu.ReadRegister(SlaveAddress, CurrentStepAddress);
+            }
+        }
+
+        /// <summary>
+        /// 多段模式段数
+        /// </summary>
+        public ushort MultiStepCount
+        {
+            get
+            {
+                return modbusRtu.ReadRegister(SlaveAddress, MultiStepCountAddress);
+            }
+            set
+            {
+                modbusRtu.WriteRegister(SlaveAddress, MultiStepCountAddress, value);
             }
         }
 
@@ -374,7 +477,7 @@ namespace ThermalContainerApplication
         public void SetMultiStep(IList<TempStepData> tempSteps)
         {
             //写入段数
-            WriteInt(SlaveAddress, MultiStepCountAddress, tempSteps.Count);
+            MultiStepCount = (ushort)tempSteps.Count;
 
             for (int i = 0; i < tempSteps.Count; i++)
             {
@@ -386,6 +489,8 @@ namespace ThermalContainerApplication
             }
 
         }
+
+        #endregion
 
         #endregion
 
@@ -404,26 +509,22 @@ namespace ThermalContainerApplication
         }
 
         /// <summary>
-        /// 启动
+        /// 启动标志
         /// </summary>
-        public void Start()
-        {
-
-            modbusRtu.WriteCoil(SlaveAddress, RunningControlCoilAddress, true);
-        }
-
-        /// <summary>
-        /// 停止
-        /// </summary>
-        public void Stop()
-        {
-
-            modbusRtu.WriteCoil(SlaveAddress, RunningControlCoilAddress, false);
+        public bool IsStart 
+        { 
+            get
+            {
+                return modbusRtu.ReadCoil(SlaveAddress, RunningControlCoilAddress);
+            }
+            set
+            {
+                modbusRtu.WriteCoil(SlaveAddress, RunningControlCoilAddress, value);
+            }
         }
 
         #endregion
 
         #endregion
-
     }
 }

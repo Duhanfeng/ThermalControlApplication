@@ -106,18 +106,42 @@ namespace ThermalContainerApplication
         {
             try
             {
+                if (McuControl == null)
+                {
+                    return;
+                }
+
                 //假如设备已连接,则查询相关数据
                 if (IsConnected)
                 {
+                    //读取工作状态
                     WorkStatus = McuControl.WorkStatus;
-                    ActualTemp = McuControl?.ActualTemp ?? -1;
+
+                    //目标温度值
+                    TargetTemp = McuControl.TargetTemp;
+                    TargetKeepWarmTime = McuControl.TargetKeepWarmTime;
+
+                    //实际温度值
+                    ActualTemp = McuControl.ActualTemp;
 
                     //读取IO状态
                     var inputs = McuControl?.ReadAllInputIOStatus();
                     var outputs = McuControl?.ReadAllOutputIOStatus();
-
                     SetAllInputs(inputs);
                     SetAllOutputs(outputs);
+
+                    //读取段数
+                    var tempMode = McuControl.TempMode;
+                    if (tempMode == 0)
+                    {
+                        CurrentStep = 1;
+                        TotalStep = 1;
+                    }
+                    else
+                    {
+                        CurrentStep = McuControl.CurrentStep;
+                        TotalStep = McuControl.MultiStepCount;
+                    }
                 }
             }
             catch (Exception)
@@ -229,6 +253,50 @@ namespace ThermalContainerApplication
             set { _workStatus = value; NotifyOfPropertyChange(() => WorkStatus); }
         }
 
+        private int _currentStep;
+
+        /// <summary>
+        /// 当前段
+        /// </summary>
+        public int CurrentStep
+        {
+            get { return _currentStep; }
+            set { _currentStep = value; NotifyOfPropertyChange(() => CurrentStep); }
+        }
+
+        private int _totalStep;
+
+        /// <summary>
+        /// 总段数
+        /// </summary>
+        public int TotalStep
+        {
+            get { return _totalStep; }
+            set { _totalStep = value; NotifyOfPropertyChange(() => TotalStep); }
+        }
+
+        private double _targetTemp;
+
+        /// <summary>
+        /// 目标温度
+        /// </summary>
+        public double TargetTemp
+        {
+            get { return _targetTemp; }
+            set { _targetTemp = value; NotifyOfPropertyChange(() => TargetTemp); }
+        }
+
+        private double _targetKeepWarmTime;
+
+        /// <summary>
+        /// 目标保温时间(分钟)
+        /// </summary>
+        public double TargetKeepWarmTime
+        {
+            get { return _targetKeepWarmTime; }
+            set { _targetKeepWarmTime = value; NotifyOfPropertyChange(() => TargetKeepWarmTime); }
+        }
+
         private double _actualTemp;
 
         /// <summary>
@@ -304,39 +372,39 @@ namespace ThermalContainerApplication
             McuControl?.SetMultiStep(e.MultiStepList);
         }
 
-        private double _presetTemp;
+        private double _singleStepTemp;
 
         /// <summary>
-        /// 预设温度值
+        /// 单段温度(摄氏度)
         /// </summary>
-        public double PresetTemp
+        public double SingleStepTemp
         {
-            get { return _presetTemp; }
-            set { _presetTemp = value; NotifyOfPropertyChange(() => PresetTemp); }
+            get { return _singleStepTemp; }
+            set { _singleStepTemp = value; NotifyOfPropertyChange(() => SingleStepTemp); }
         }
 
         /// <summary>
         /// 设置设备预设温度值
         /// </summary>
         /// <param name="temp">温度值(摄氏度)</param>
-        public void SetPresetTemp()
+        public void SetSingleStepTemp()
         {
             if (McuControl == null)
             {
                 return;
             }
 
-            if (PresetTemp < -30)
+            if (SingleStepTemp < -30)
             {
-                PresetTemp = -30;
+                SingleStepTemp = -30;
             }
-            if (PresetTemp > 90)
+            if (SingleStepTemp > 90)
             {
-                PresetTemp = 90;
+                SingleStepTemp = 90;
             }
 
             //写入数据
-            McuControl.PresetTemp = PresetTemp;
+            McuControl.SingleStepTemp = SingleStepTemp;
         }
 
         #endregion
@@ -552,9 +620,8 @@ namespace ThermalContainerApplication
         /// </summary>
         public void Start()
         {
-            McuControl?.Start();
             IsStart = true;
-
+            McuControl.IsStart = true;
         }
 
         /// <summary>
@@ -562,8 +629,8 @@ namespace ThermalContainerApplication
         /// </summary>
         public void Stop()
         {
-            McuControl?.Stop();
             IsStart = false;
+            McuControl.IsStart = false;
         }
 
         #endregion

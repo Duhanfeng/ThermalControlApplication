@@ -21,7 +21,6 @@ namespace ThermalContainerApplication
         public byte SlaveAddress { get; set; }
 
         #endregion
-
         #region 设备控制
 
         #region IO
@@ -64,48 +63,10 @@ namespace ThermalContainerApplication
 
         #region 温度控制
 
-        private double _presetTemp = 60;
-
-
-        public double PresetTemp
-        {
-            get
-            {
-                return _presetTemp;
-            }
-            set
-            {
-                _presetTemp = value;
-                Console.WriteLine($"预设温度:{value}");
-            }
-        }
-
-        private Random random = new Random();
-
-        private double _currenTemp1 = 30;
-
-        public double ActualTemp
-        { 
-            get
-            {
-                _currenTemp1 += random.NextDouble() - 0.5;
-
-                if (_currenTemp1 > PresetTemp)
-                {
-                    _currenTemp1 = PresetTemp;
-                }
-                else if (_currenTemp1 < 0)
-                {
-                    _currenTemp1 = 0;
-                }
-                return _currenTemp1;
-            }
-        }
-
         public ushort _tempMode = 0;
 
-        public ushort TempMode 
-        { 
+        public ushort TempMode
+        {
             get
             {
                 return _tempMode;
@@ -118,11 +79,82 @@ namespace ThermalContainerApplication
         }
 
         /// <summary>
+        /// 目标温度(摄氏度)
+        /// </summary>
+        public double TargetTemp
+        {
+            get
+            {
+                return SingleStepTemp;
+            }
+        }
+
+        /// <summary>
+        /// 目标保温时间(分钟)
+        /// </summary>
+        public double TargetKeepWarmTime { get; } = 20;
+
+        private Random random = new Random();
+
+        private double _currenTemp1 = 30;
+
+        public double ActualTemp
+        {
+            get
+            {
+                _currenTemp1 += random.NextDouble() - 0.5;
+
+                if (_currenTemp1 > 90)
+                {
+                    _currenTemp1 = 90;
+                }
+                else if (_currenTemp1 < -20)
+                {
+                    _currenTemp1 = -20;
+                }
+                return _currenTemp1;
+            }
+        }
+
+        private double _presetTemp = 60;
+
+
+        public double SingleStepTemp
+        {
+            get
+            {
+                return _presetTemp;
+            }
+            set
+            {
+                _presetTemp = value;
+                Console.WriteLine($"预设温度:{value}");
+            }
+        }
+
+        /// <summary>
+        /// 多段模式当前段
+        /// </summary>
+        public ushort CurrentStep
+        {
+            get
+            {
+                return 1;
+            }
+        }
+
+        /// <summary>
+        /// 多段模式段数
+        /// </summary>
+        public ushort MultiStepCount { get; set; }
+
+        /// <summary>
         /// 设置多段数据
         /// </summary>
         /// <param name="tempSteps"></param>
         public void SetMultiStep(IList<TempStepData> tempSteps)
         {
+            MultiStepCount = (ushort)tempSteps.Count;
             Console.WriteLine($"设置多段:({tempSteps.Count}段)");
             foreach (var item in tempSteps)
             {
@@ -137,35 +169,28 @@ namespace ThermalContainerApplication
         /// <summary>
         /// 当前工作状态
         /// </summary>
-        public EWorkStatus WorkStatus
+        public EWorkStatus WorkStatus { get; private set; } = EWorkStatus.Ready;
+
+        private bool _isStart = false;
+
+        /// <summary>
+        /// 启动标志
+        /// </summary>
+        public bool IsStart
         {
             get
             {
-                return EWorkStatus.Ready;
+                return _isStart;
+            }
+            set
+            {
+                WorkStatus = value ? EWorkStatus.Running : EWorkStatus.Ready;
+                Console.WriteLine(value ? "启动" : "停止");
             }
         }
 
-        /// <summary>
-        /// 启动
-        /// </summary>
-        public void Start()
-        {
-            Console.WriteLine("Start");
-
-        }
-
-        /// <summary>
-        /// 停止
-        /// </summary>
-        public void Stop()
-        {
-            Console.WriteLine("Stop");
-
-        }
-
         #endregion
 
         #endregion
-
     }
 }
