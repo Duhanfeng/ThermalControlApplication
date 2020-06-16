@@ -10,7 +10,7 @@
              xmlns:converters="clr-namespace:ThermalContainerApplication.Converters"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance local:DeviceControlViewModel}"
-             d:DesignHeight="550" d:DesignWidth="350">
+             d:DesignHeight="750" d:DesignWidth="350">
     <UserControl.Resources>
         <ResourceDictionary>
             <converters:BoolToInvertConverter x:Key="BoolToInvertConverter" />

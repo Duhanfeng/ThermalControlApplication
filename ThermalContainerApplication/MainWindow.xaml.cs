@@ -85,6 +85,9 @@ namespace ThermalContainerApplication
         /// </summary>
         public MainWindowViewModel()
         {
+            Device1 = new McuControl();
+            Device2 = new McuControl();
+
             DeviceModel1.McuControl = Device1;
             DeviceModel2.McuControl = Device2;
 

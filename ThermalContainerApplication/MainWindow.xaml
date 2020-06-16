@@ -14,7 +14,6 @@
                  Title="温度控制系统 -- power by Duhanfeng" Height="980" Width="1400" MinHeight="980" MinWidth="1400">
     <Window.Resources>
         <ResourceDictionary>
-            
             <converters:BoolToInvertConverter x:Key="BoolToInvertConverter" />
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
             <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
@@ -89,7 +88,7 @@
                 </Grid>
             </DockPanel>
             <Grid Background="LightGray">
-                <Chart:TemperatureChart DataContext="{Binding ChartViewModel}" />
+                <Chart:TemperatureChart DataContext="{Binding ChartViewModel}"/>
             </Grid>
         </DockPanel>
 
