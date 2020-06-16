@@ -21,7 +21,7 @@ namespace ThermalContainerApplication.Chart
             Charting.For<MeasureModel>(mapper);
 
             //设置时间格式化器
-            DateTimeFormatter = value => new DateTime((long)value).ToString("HH:mm");
+            //DateTimeFormatter = value => new DateTime((long)value).ToString("HH:mm");
             AxisUnit = TimeSpan.TicksPerSecond;
             //AxisUnit = TimeSpan.TicksPerMillisecond * 200;
             
@@ -134,15 +134,9 @@ namespace ThermalContainerApplication.Chart
             set { _axisStep = value; NotifyOfPropertyChange(() => AxisStep); }
         }
 
-        private Func<double, string> _dateTimeFormatter;
-
-        /// <summary>
-        /// X轴时间格式化器
-        /// </summary>
-        public Func<double, string> DateTimeFormatter
+        public string DateTimeFormatter(double value)
         {
-            get { return _dateTimeFormatter; }
-            set { _dateTimeFormatter = value; NotifyOfPropertyChange(() => DateTimeFormatter); }
+            return new DateTime((long)value).ToString("HH:mm");
         }
 
         /// <summary>
